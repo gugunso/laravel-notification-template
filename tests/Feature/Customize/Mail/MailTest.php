@@ -2,18 +2,20 @@
 
 namespace Gugunso\LaravelNotificationTemplate\Tests\Feature\Customize\Mail;
 
-use Gugunso\LaravelNotificationTemplate\Common\LaravelCommonConfig;
 use Gugunso\LaravelNotificationTemplate\Drivers\Mail\EmptyMailDriver;
 use Gugunso\LaravelNotificationTemplate\Drivers\Mail\Mail;
+use Gugunso\LaravelNotificationTemplate\Entity\DummyNotifiable;
 use Gugunso\LaravelNotificationTemplate\Entity\EmptyDto;
 use Gugunso\LaravelNotificationTemplate\Exceptions\DtoMismatchException;
 use Gugunso\LaravelNotificationTemplate\Repository\Contracts\NotificationSettingRepository;
 use Gugunso\LaravelNotificationTemplate\TemplatedNotification;
 use Gugunso\LaravelNotificationTemplate\Test\TestCase;
 use Illuminate\Contracts\View\Factory;
+
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Notification;
 use Illuminate\View\ViewFinderInterface;
 
 /**
@@ -41,34 +43,15 @@ class CustomizeMailTest extends TestCase
         File::shouldReceive('exists')->andReturnTrue();
         File::makePartial();
         //Config（設定ファイル内容をテスト用に準備）
-        Config::set('app.locale', 'en');
+        Config::set('app.locale', 'ja');
         Config::set('mail.from.address', 'test-mail-driver@feature-test.example.com');
         Config::set('mail.from.name', 'テスト');
+
+        $paths = Config::get('view.paths');
+        $dirName=realpath(dirname(__FILE__).'/../../views');
+        Config::set('view.paths', array_merge($paths,[0=>$dirName]));
+
         Config::set('notification-template', $this->config());
-
-        $config = new class() extends LaravelCommonConfig {
-        };
-        App::shouldReceive('make')->with(LaravelCommonConfig::class)->andReturn($config);
-
-        //ViewFinder関連
-        $mockFinder = \Mockery::mock(ViewFinderInterface::class);
-        $mockFinder->shouldReceive('find')->andReturn('dummyPath');
-
-        $mockFactory = \Mockery::mock(Factory::class);
-        $mockFactory->shouldReceive('getFinder')->andReturn($mockFinder);
-
-        App::shouldReceive('make')->with(Factory::class)
-            ->andReturn(
-                $mockFactory
-            );
-
-        //リポジトリ
-        App::shouldReceive('make')->with(NotificationSettingRepository::class)
-            ->andReturn(
-                new \Gugunso\LaravelNotificationTemplate\Repository\ConfigFile\NotificationSettingRepository()
-            );
-
-        App::makePartial();
     }
 
     public function config()
@@ -81,7 +64,7 @@ class CustomizeMailTest extends TestCase
                     'notification_templates' => [
                         [
                             'id' => 1,
-                            'viewName' => 'test',
+                            'viewName' => 'mail-test',
                             'channel' => 'mail',
                             'dtoClass' => EmptyDto::class,
                             'locale' => 'ja',
@@ -95,7 +78,7 @@ class CustomizeMailTest extends TestCase
                     'notification_templates' => [
                         [
                             'id' => 2,
-                            'viewName' => 'test',
+                            'viewName' => 'database-test',
                             'channel' => 'mail',
                             'dtoClass' => EmptyDto::class,
                             'driver' => '',

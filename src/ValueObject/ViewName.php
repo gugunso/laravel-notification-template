@@ -13,8 +13,6 @@ class ViewName extends StringValue
 {
     /** @var string $path */
     private $path;
-    /** @var ViewFinderInterface $viewFinder */
-    private $viewFinder;
 
     /**
      * ViewName constructor.
@@ -22,7 +20,7 @@ class ViewName extends StringValue
      */
     public function __construct(string $value)
     {
-        $this->viewFinder = App::make(Factory::class)->getFinder();
+
         parent::__construct($value);
     }
 
@@ -50,7 +48,8 @@ class ViewName extends StringValue
      */
     private function find(string $template)
     {
-        return $this->viewFinder->find($this->normalize($template));
+        $viewFinder = App::make(Factory::class)->getFinder();
+        return $viewFinder->find($this->normalize($template));
     }
 
     /**

@@ -8,30 +8,20 @@ use InvalidArgumentException;
 
 /**
  * Class NotificationChannel
+ * serializeされることを考慮し、$channelList はあえてプロパティとして持たせていない。
  * @package Gugunso\LaravelNotificationTemplate\ValueObject
  */
 class NotificationChannel extends StringValue
 {
-    /** @var SupportedChannelList $channelList */
-    private $channelList;
-
-    /**
-     * NotificationChannel constructor.
-     * @param string $value
-     */
-    public function __construct(string $value)
-    {
-        $this->channelList = App::make(SupportedChannelList::class);
-        parent::__construct($value);
-    }
-
     /**
      * @param array $parameter
      * @return mixed
      */
     public function notificationTemplateObject(array $parameter): NotificationTemplate
     {
-        $className = $this->channelList->configClassOf($this->getValue());
+        /** @var SupportedChannelList $channelList */
+        $channelList = App::make(SupportedChannelList::class);
+        $className = $channelList->configClassOf($this->getValue());
         return App::make($className, $parameter);
     }
 
@@ -41,7 +31,9 @@ class NotificationChannel extends StringValue
      */
     public function defaultDriverClassName(): string
     {
-        return $this->channelList->defaultDriverOf($this->getValue());
+        /** @var SupportedChannelList $channelList */
+        $channelList = App::make(SupportedChannelList::class);
+        return $channelList->defaultDriverOf($this->getValue());
     }
 
     /**
@@ -50,7 +42,9 @@ class NotificationChannel extends StringValue
      */
     public function driverInterfaceName(): string
     {
-        return $this->channelList->driverInterfaceOf($this->getValue());
+        /** @var SupportedChannelList $channelList */
+        $channelList = App::make(SupportedChannelList::class);
+        return $channelList->driverInterfaceOf($this->getValue());
     }
 
     /**
@@ -58,7 +52,9 @@ class NotificationChannel extends StringValue
      */
     protected function setValue(string $value): void
     {
-        if (!$this->channelList->contains($value)) {
+        /** @var SupportedChannelList $channelList */
+        $channelList = App::make(SupportedChannelList::class);
+        if (!$channelList->contains($value)) {
             throw new InvalidArgumentException('チャンネル名:' . $value . 'は未対応');
         }
         $this->value = $value;

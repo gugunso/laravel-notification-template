@@ -13,19 +13,13 @@ use Swift_RfcComplianceException;
  */
 class RfcValidMailAddress extends StringValue
 {
-    /** @var EmailValidator $validator */
-    private $validator;
-
     /**
      * RfcValidMailAddress constructor.
      * @param string $value
      */
     public function __construct(string $value)
     {
-        $this->validator = App::make(EmailValidator::class);
         parent::__construct($value);
-
-
     }
 
     /**
@@ -34,7 +28,9 @@ class RfcValidMailAddress extends StringValue
      */
     protected function setValue(string $value): void
     {
-        if (!$this->validator->isValid($value, App::make(RFCValidation::class))) {
+        /** @var EmailValidator $validator serializeされないよう、プロパティとして持たせずにここでインスタンス取得 */
+        $validator = App::make(EmailValidator::class);
+        if (!$validator->isValid($value, App::make(RFCValidation::class))) {
             throw new Swift_RfcComplianceException('Invalid mail address.');
         }
         $this->value = $value;
