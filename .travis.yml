@@ -23,6 +23,7 @@ before_script:
   - if [ $(phpenv version-name) = "7.2" ]; then ./cc-test-reporter before-build; fi
 
 install:
+  - 'composer config github-oauth.github.com ${GH_TOKEN};'
   - 'composer remove --dev --no-update orchestra/testbench'
   - 'composer require --dev orchestra/testbench $ORCHESTRA_VERSION'
   - 'composer install'
