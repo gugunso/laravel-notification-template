@@ -1,0 +1,25 @@
+language: php
+env:
+  global:
+    - CC_TEST_REPORTER_ID=e7bc55b0565e054da018571e114705cc0c7191b1283831eba11581e36534b346
+    - GIT_COMMITTED_AT=$(if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then git log -1 --pretty=format:%ct; else git log -1 --skip 1 --pretty=format:%ct; fi)
+
+matrix:
+  include:
+    - php: '7.2'
+      env: 'ORCHESTRA_VERSION=4.*'
+
+before_script:
+  - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+  - chmod +x ./cc-test-reporter
+  - if [ $(phpenv version-name) = "7.2" ]; then ./cc-test-reporter before-build; fi
+
+install:
+  - 'composer remove --dev --no-update orchestra/testbench'
+  - 'composer require --dev orchestra/testbench $ORCHESTRA_VERSION'
+  - 'composer install'
+
+script: 'XDEBUG_MODE=coverage vendor/bin/phpunit --coverage-clover clover.xml'
+
+after_script:
+  - 'if [ $(phpenv version-name) = "7.2" ] && [ "$TRAVIS_PULL_REQUEST" == "false" ]; then ./cc-test-reporter after-build -t clover --exit-code $TRAVIS_TEST_RESULT; fi'
