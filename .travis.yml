@@ -17,7 +17,7 @@ before_script:
 install:
   - 'composer config github-oauth.github.com ${GH_TOKEN};'
   - 'composer remove --dev --no-update orchestra/testbench'
-  - 'composer require --dev --prefer-dist –-no-interaction orchestra/testbench $ORCHESTRA_VERSION'
+  - 'composer require --dev --prefer-dist --no-interaction orchestra/testbench $ORCHESTRA_VERSION'
   - 'composer install'
 
 script: 'XDEBUG_MODE=coverage vendor/bin/phpunit --coverage-clover clover.xml'
