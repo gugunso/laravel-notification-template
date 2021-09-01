@@ -17,9 +17,9 @@
         }
     ],
     "require": {
-        "php": ">=7.1",
+        "php": ">=7.2",
         "gugunso/key-value-list": "^0.1.0",
-        "gugunso/read-only-object": "^0.1.0"
+        "gugunso/read-only-object": "^0.2.0"
     },
     "autoload": {
         "psr-4": {

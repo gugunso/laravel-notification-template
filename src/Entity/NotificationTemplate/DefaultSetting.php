@@ -9,14 +9,14 @@ use Gugunso\LaravelNotificationTemplate\ValueObject\DriverName;
 use Gugunso\LaravelNotificationTemplate\ValueObject\DtoClassName;
 use Gugunso\LaravelNotificationTemplate\ValueObject\NotificationChannel;
 use Gugunso\LaravelNotificationTemplate\ValueObject\ViewName;
-use Gugunso\ReadOnlyObject\ReadOnlyObject;
+use Gugunso\ReadOnlyObject\ReadOnlyArray;
 use Illuminate\Support\Facades\App;
 
 /**
  * Class NotificationTemplate
  * @package Gugunso\LaravelNotificationTemplate\Entity
  */
-class DefaultSetting extends ReadOnlyObject implements NotificationTemplate
+class DefaultSetting extends ReadOnlyArray implements NotificationTemplate
 {
     protected $id;
     /** @var ViewName $viewName テンプレートファイル名 */
